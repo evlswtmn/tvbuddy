@@ -1,0 +1,21 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#667eea"/>
+
+  <!-- TV Screen -->
+  <rect x="25" y="35" width="78" height="55" rx="4" fill="#fff"/>
+  <rect x="30" y="40" width="68" height="45" fill="#764ba2"/>
+
+  <!-- Play icon inside screen -->
+  <polygon points="55,55 55,70 70,62.5" fill="#fff"/>
+
+  <!-- TV stand -->
+  <rect x="55" y="90" width="18" height="5" fill="#fff"/>
+  <rect x="40" y="95" width="48" height="3" fill="#fff"/>
+
+  <!-- Antenna -->
+  <line x1="50" y1="35" x2="40" y2="20" stroke="#fff" stroke-width="2"/>
+  <line x1="78" y1="35" x2="88" y2="20" stroke="#fff" stroke-width="2"/>
+  <circle cx="40" cy="20" r="3" fill="#fff"/>
+  <circle cx="88" cy="20" r="3" fill="#fff"/>
+</svg>

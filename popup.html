@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TV Buddy</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📺 TV Buddy</h1>
+      <p class="tagline">Your streaming companion</p>
+    </header>
+
+    <div id="currentContent" class="current-content">
+      <div class="loading">Detecting what you're watching...</div>
+    </div>
+
+    <div id="recommendations" class="recommendations">
+      <h2>Recommended for you</h2>
+      <div id="recommendationList" class="recommendation-list">
+        <div class="loading">Loading recommendations...</div>
+      </div>
+    </div>
+
+    <div id="error" class="error hidden"></div>
+
+    <footer>
+      <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

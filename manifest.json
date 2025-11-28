@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "name": "TV Buddy",
+  "version": "1.0.0",
+  "description": "Get personalized TV show and movie recommendations based on what you're currently streaming",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.netflix.com/*",
+    "https://*.disneyplus.com/*",
+    "https://*.hulu.com/*",
+    "https://*.primevideo.com/*",
+    "https://*.hbomax.com/*",
+    "https://*.max.com/*",
+    "https://*.youtube.com/*",
+    "https://*.peacocktv.com/*",
+    "https://*.paramountplus.com/*",
+    "https://*.apple.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.netflix.com/*",
+        "https://*.disneyplus.com/*",
+        "https://*.hulu.com/*",
+        "https://*.primevideo.com/*",
+        "https://*.hbomax.com/*",
+        "https://*.max.com/*",
+        "https://*.youtube.com/*",
+        "https://*.peacocktv.com/*",
+        "https://*.paramountplus.com/*",
+        "https://*.apple.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}

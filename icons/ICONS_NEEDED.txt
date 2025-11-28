@@ -1,0 +1,11 @@
+IMPORTANT: You need to generate the icon PNG files before loading this extension.
+
+Please open generate-icons.html in your browser and save the icons as:
+- icon16.png
+- icon48.png
+- icon128.png
+
+See README.md in this directory for detailed instructions.
+
+Alternatively, you can temporarily use any PNG images (renamed to the above names)
+to test the extension, but proper icons should be created for production use.
