@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "SOP Compliance Guard",
+  "version": "0.1.0",
+  "description": "Enforce SOP checklists with live validation, LLM tips, and submission guards for Zendesk ticket close workflows.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.zendesk.com/*"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html"
+}

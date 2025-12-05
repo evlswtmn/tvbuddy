@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOP Guard Options</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>SOP Guard Configuration</h1>
+        <p>Manage SOP templates per domain, license gates, and team controls.</p>
+      </header>
+
+      <section class="card">
+        <h2>Organization</h2>
+        <label class="field">
+          <span>Domain key (e.g., zendesk.com)</span>
+          <input id="domain" type="text" placeholder="example.com" />
+        </label>
+        <button id="load">Load domain config</button>
+      </section>
+
+      <section class="card">
+        <h2>License & Team Gates</h2>
+        <label class="field">
+          <span>Plan</span>
+          <select id="plan">
+            <option value="free">Free</option>
+            <option value="pro">Pro (Stripe licensed)</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Stripe license key (stored locally)</span>
+          <input id="licenseKey" type="text" placeholder="sk_live_xxx" />
+        </label>
+        <label class="field inline">
+          <input id="hardBlock" type="checkbox" />
+          <span>Enable hard block on submission</span>
+        </label>
+        <label class="field inline">
+          <input id="analytics" type="checkbox" />
+          <span>Team analytics for overrides</span>
+        </label>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>SOP Template</h2>
+          <button id="template">Insert Zendesk Close Template</button>
+        </div>
+        <p class="hint">
+          Define SOP as JSON rules for required fields, allowed values, regex checks, and LLM narrative checks.
+        </p>
+        <textarea id="sopJson" rows="14" spellcheck="false"></textarea>
+      </section>
+
+      <section class="actions">
+        <button id="save">Save</button>
+        <span id="status" role="status"></span>
+      </section>
+    </main>
+
+    <script src="options.js"></script>
+  </body>
+</html>
