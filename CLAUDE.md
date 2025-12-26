@@ -1,43 +1,93 @@
-# CLAUDE.md - AI Assistant Guide for TVBuddy
+# CLAUDE.md - AI Assistant Guide for TVBuddy Game
 
 ## Project Overview
 
-**TVBuddy** is a Chrome extension that provides TV show information and recommendations to users while browsing.
+**TVBuddy** is an isometric Action RPG dungeon-crawler built with Python and Pygame.
 
 ### Project Status
-- **Stage**: Initial Development
-- **Type**: Chrome Browser Extension (Manifest V3)
-- **Primary Language**: JavaScript/TypeScript (to be determined)
-- **Target Browsers**: Chrome, Edge, and other Chromium-based browsers
+- **Stage**: Active Development
+- **Type**: Desktop Game (Python/Pygame)
+- **Genre**: Isometric Action RPG
+- **Platform**: Cross-platform (Windows, macOS, Linux)
 
 ---
 
 ## Repository Structure
 
-This project follows the standard Chrome extension structure. Expected directory layout:
-
 ```
 tvbuddy/
-├── manifest.json           # Extension manifest (Manifest V3)
-├── src/
-│   ├── background/        # Service worker scripts
-│   ├── content/           # Content scripts injected into pages
-│   ├── popup/             # Extension popup UI
-│   │   ├── popup.html
-│   │   ├── popup.js
-│   │   └── popup.css
-│   ├── options/           # Options/settings page
-│   ├── utils/             # Shared utilities and helpers
-│   └── api/               # API integration modules
-├── assets/
-│   ├── icons/             # Extension icons (16x16, 48x48, 128x128)
-│   └── images/            # Other images and assets
-├── tests/                 # Unit and integration tests
-├── docs/                  # Additional documentation
-├── dist/                  # Build output (gitignored)
-├── package.json           # Node dependencies and scripts
-└── README.md              # User-facing documentation
+├── main.py                 # Game entry point and main game loop
+├── game/
+│   ├── __init__.py        # Package initializer
+│   ├── player.py          # Player class and character types
+│   ├── enemy.py           # Enemy classes and AI behavior
+│   ├── dungeon.py         # Procedural dungeon generation
+│   ├── projectile.py      # Projectile and attack systems
+│   ├── items.py           # Loot, chests, and items
+│   ├── ui.py              # UI rendering and menus
+│   ├── game_state.py      # State management (Menu, Playing, GameOver)
+│   └── utils.py           # Helper functions and constants
+├── assets/                 # Game assets (sprites, sounds, fonts)
+│   ├── sprites/           # Character and enemy sprites
+│   ├── sounds/            # Sound effects and music
+│   └── fonts/             # UI fonts
+├── tests/                  # Unit tests
+├── requirements.txt        # Python dependencies
+├── .gitignore             # Git ignore rules
+├── README.md              # User-facing documentation
+└── CLAUDE.md              # This file
 ```
+
+---
+
+## Game Architecture
+
+### Core Systems
+
+1. **Character System** (`player.py`)
+   - Base Player class with common attributes (HP, damage, position)
+   - Three character classes: Warrior, Ranger, Wizard
+   - Resource management (Stamina/Mana)
+   - Movement and attack logic
+
+2. **Enemy System** (`enemy.py`)
+   - Base Enemy class
+   - Different enemy types per dungeon floor
+   - Scaling difficulty system
+   - AI behavior (chase, attack, patrol)
+   - Boss enemy with special mechanics
+
+3. **Dungeon Generation** (`dungeon.py`)
+   - Procedural generation algorithm
+   - Room and corridor creation
+   - Wall and door placement
+   - Chest spawning
+   - Stair/portal to next level
+
+4. **Combat System** (`projectile.py`)
+   - Melee and ranged attacks
+   - Projectile physics
+   - Collision detection
+   - Damage calculation
+
+5. **Progression System** (`items.py`, `player.py`)
+   - XP and leveling
+   - Stat increases on level up
+   - Loot drops from chests
+   - Stat-boost items
+
+6. **UI System** (`ui.py`)
+   - Character selection screen
+   - In-game overlay (Health, Resources, XP, Floor)
+   - Pause menu
+   - Game over screen
+
+7. **State Management** (`game_state.py`)
+   - Menu state
+   - Playing state
+   - Paused state
+   - Game over/Victory state
+   - Level transition state
 
 ---
 
@@ -45,69 +95,122 @@ tvbuddy/
 
 ### Code Style
 
-1. **JavaScript/TypeScript**
-   - Use ES6+ features (async/await, arrow functions, destructuring)
-   - Prefer `const` over `let`, avoid `var`
-   - Use meaningful variable and function names
-   - Add JSDoc comments for public functions
+1. **Python Style (PEP 8)**
+   - Use 4 spaces for indentation
    - Maximum line length: 100 characters
+   - Use snake_case for functions and variables
+   - Use PascalCase for class names
+   - Add docstrings to all classes and public methods
 
-2. **File Naming**
-   - Use kebab-case for files: `content-script.js`, `api-client.js`
-   - Use PascalCase for component/class files if using a framework
-   - Use `.test.js` suffix for test files
+2. **File Organization**
+   - One class per file (with exceptions for small related classes)
+   - Group related functionality into modules
+   - Keep main.py minimal - just game loop and initialization
 
-3. **Code Organization**
-   - One primary export per file
-   - Group related functions into modules
-   - Separate concerns (UI, logic, API calls)
-   - Keep functions small and focused (< 50 lines ideally)
+3. **Naming Conventions**
+   - Classes: `Player`, `Enemy`, `Dungeon`
+   - Functions: `update_position()`, `handle_collision()`
+   - Constants: `SCREEN_WIDTH`, `MAX_HP`
+   - Private methods: `_internal_method()`
 
-### Chrome Extension Best Practices
+### Pygame Best Practices
 
-1. **Manifest V3 Requirements**
-   - Use service workers instead of background pages
-   - Implement proper CSP (Content Security Policy)
-   - Use declarativeNetRequest for request modification
-   - Prefer dynamic imports for code splitting
+1. **Game Loop Structure**
+   ```python
+   while running:
+       # 1. Handle events
+       for event in pygame.event.get():
+           # Process input
 
-2. **Security**
-   - Never use `eval()` or inline scripts
-   - Sanitize all user inputs and external data
-   - Use strict CSP headers
-   - Implement proper CORS handling
-   - Store sensitive data using chrome.storage with encryption if needed
+       # 2. Update game state
+       player.update()
+       enemies.update()
 
-3. **Performance**
-   - Lazy load content scripts when possible
-   - Minimize DOM manipulation in content scripts
-   - Use chrome.storage.local for caching
-   - Implement debouncing for frequent API calls
-   - Bundle and minify for production
+       # 3. Render
+       screen.fill(BLACK)
+       draw_all()
+       pygame.display.flip()
 
-4. **Permissions**
-   - Request minimal permissions required
-   - Use optional permissions for non-essential features
-   - Document why each permission is needed
+       # 4. Frame rate
+       clock.tick(60)
+   ```
 
-### API Integration
+2. **Performance**
+   - Use sprite groups for efficient rendering
+   - Implement dirty rect updating when possible
+   - Cache frequently used surfaces
+   - Avoid creating new objects in the game loop
 
-1. **TV Data Sources**
-   - Primary: TVMaze API, TMDB API, or similar
-   - Implement rate limiting and caching
-   - Handle API errors gracefully
-   - Provide fallback when APIs are unavailable
+3. **Asset Management**
+   - Load all assets at initialization, not during gameplay
+   - Use placeholder colored shapes for prototyping
+   - Keep asset files organized by type
 
-2. **Data Caching**
-   - Cache API responses in chrome.storage.local
-   - Implement TTL (Time To Live) for cached data
-   - Clear stale cache entries periodically
+4. **Collision Detection**
+   - Use pygame.Rect for simple collisions
+   - Implement spatial partitioning for many entities
+   - Use sprite groups with collision methods
 
-3. **Error Handling**
-   - Always wrap API calls in try-catch
-   - Provide user-friendly error messages
-   - Log errors for debugging (with privacy in mind)
-   - Implement retry logic with exponential backoff
+---
+
+## Game Design Specifications
+
+### Character Classes
+
+**Warrior**
+- Health: 150
+- Damage: 25
+- Attack Speed: Slow (1.5 seconds)
+- Resource: Stamina (100)
+- Attack Type: Melee
+
+**Ranger/Thief**
+- Health: 100
+- Damage: 15
+- Attack Speed: Medium (1.0 second)
+- Resource: Stamina (100)
+- Attack Type: Ranged
+
+**Wizard/Sorceress**
+- Health: 75
+- Damage: 12
+- Attack Speed: Fast (0.5 seconds)
+- Resource: Mana (100, regenerates 2/second)
+- Attack Type: Ranged (fast projectiles)
+
+### Dungeon Levels
+
+**Level 1** - The Entrance
+- Enemy Count: 8-12
+- Enemy HP: 30-50
+- Enemy Damage: 5-10
+- Chests: 2-3
+
+**Level 2** - The Depths
+- Enemy Count: 12-16
+- Enemy HP: 60-80
+- Enemy Damage: 10-15
+- Chests: 3-4
+
+**Level 3** - The Boss Chamber
+- Enemy Count: 6-10 (harder types)
+- Enemy HP: 80-100
+- Enemy Damage: 15-20
+- Boss HP: 500
+- Boss Damage: 30
+- Chests: 4-5
+
+### Progression
+
+**Leveling**
+- XP required: 100 * level
+- HP increase per level: +15
+- Damage increase per level: +3
+
+**Loot System**
+- Chests contain stat-boost items
+- Item types: +HP, +Damage, +Attack Speed
+- Rare chance for powerful items
 
 ---
 
@@ -115,63 +218,22 @@ tvbuddy/
 
 ### Branch Strategy
 
-- **main/master**: Production-ready code only
+- **main**: Stable, playable builds only
 - **develop**: Integration branch for features
-- **claude/***: AI assistant working branches (auto-created)
-- **feature/***: New features
+- **claude/***: AI assistant working branches
+- **feature/***: New game features
 - **fix/***: Bug fixes
-- **docs/***: Documentation updates
 
 ### Commit Messages
 
-Follow conventional commits format:
+Follow conventional commits:
 
 ```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
+feat(combat): add critical hit mechanic
+fix(dungeon): resolve wall collision bug
+refactor(player): improve movement code
+docs(readme): update installation instructions
 ```
-
-**Types:**
-- `feat`: New feature
-- `fix`: Bug fix
-- `docs`: Documentation changes
-- `style`: Code style changes (formatting, etc.)
-- `refactor`: Code refactoring
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks
-
-**Examples:**
-```
-feat(popup): add TV show search functionality
-fix(content): resolve script injection timing issue
-docs(readme): add installation instructions
-```
-
-### Development Workflow
-
-1. **Starting New Work**
-   ```bash
-   git checkout -b feature/feature-name
-   ```
-
-2. **Making Changes**
-   - Write code following conventions
-   - Test changes locally
-   - Commit with descriptive messages
-
-3. **Before Committing**
-   - Test the extension in Chrome
-   - Run linter if configured
-   - Review changes with `git diff`
-
-4. **Creating Pull Requests**
-   - Ensure branch is up to date
-   - Provide clear PR description
-   - Link related issues
-   - Request review if applicable
 
 ---
 
@@ -179,103 +241,31 @@ docs(readme): add installation instructions
 
 ### Manual Testing
 
-1. **Extension Loading**
-   - Load unpacked extension in Chrome (chrome://extensions)
-   - Test with Developer Mode enabled
-   - Verify all permissions granted
+1. **Character Classes**
+   - Test each class individually
+   - Verify resource consumption
+   - Check attack mechanics
 
-2. **Functionality Testing**
-   - Test popup UI interactions
-   - Verify content scripts inject properly
-   - Test on various TV-related websites
-   - Check background service worker behavior
+2. **Dungeon Generation**
+   - Generate multiple dungeons
+   - Verify no impossible layouts
+   - Check for proper spawning
 
-3. **Cross-Browser Testing**
-   - Test on Chrome stable
-   - Test on Edge if possible
-   - Verify on different OS (Windows, macOS, Linux)
+3. **Combat**
+   - Test player vs enemy combat
+   - Verify damage calculation
+   - Check projectile collisions
 
-### Automated Testing
+4. **Progression**
+   - Test leveling up
+   - Verify stat increases
+   - Check loot pickup
 
-When implemented:
-- Unit tests for utility functions
-- Integration tests for API calls
-- E2E tests for critical user flows
-- Test coverage target: >80%
+### Automated Testing (Future)
 
----
-
-## Key Chrome Extension APIs to Use
-
-### Essential APIs
-
-1. **chrome.storage**
-   - Store user preferences
-   - Cache TV show data
-   - Sync settings across devices (chrome.storage.sync)
-
-2. **chrome.runtime**
-   - Message passing between components
-   - Extension lifecycle management
-   - Error handling
-
-3. **chrome.tabs**
-   - Detect TV-related websites
-   - Inject content scripts dynamically
-   - Open recommendation pages
-
-4. **chrome.action** (formerly browserAction)
-   - Control popup behavior
-   - Update badge text/color
-   - Handle icon clicks
-
-### Optional APIs (Based on Features)
-
-- **chrome.alarms**: Scheduled tasks (cache cleanup, update checks)
-- **chrome.notifications**: Show TV show alerts
-- **chrome.contextMenus**: Right-click menu integration
-- **chrome.declarativeNetRequest**: Modify network requests if needed
-
----
-
-## Environment Setup
-
-### Prerequisites
-
-```bash
-# Node.js (LTS version)
-node --version  # Should be v18+ or v20+
-
-# npm or yarn
-npm --version
-```
-
-### Initial Setup (To Be Created)
-
-```bash
-# Install dependencies
-npm install
-
-# Run development build
-npm run dev
-
-# Build for production
-npm run build
-
-# Run tests
-npm test
-
-# Lint code
-npm run lint
-```
-
-### Chrome Extension Development
-
-1. Open Chrome and navigate to `chrome://extensions`
-2. Enable "Developer mode" (toggle in top-right)
-3. Click "Load unpacked"
-4. Select the project directory (or dist/ folder if build step exists)
-5. Extension icon should appear in toolbar
+- Unit tests for game logic
+- Integration tests for systems
+- Procedural generation tests
 
 ---
 
@@ -284,138 +274,145 @@ npm run lint
 ### When Working on This Project
 
 1. **Always Read Before Writing**
-   - Read existing files before modifying
-   - Understand the current structure
-   - Don't assume file contents
+   - Understand existing class structure
+   - Check dependencies between modules
+   - Don't duplicate functionality
 
-2. **Follow Manifest V3**
-   - Never suggest Manifest V2 patterns
-   - Use service workers, not background pages
-   - Implement proper CSP
+2. **Modular Design**
+   - Keep classes focused and single-purpose
+   - Use composition over inheritance
+   - Minimize coupling between systems
 
-3. **Security First**
-   - Validate and sanitize all inputs
-   - Use parameterized queries/safe APIs
-   - Never expose API keys in client code
-   - Implement proper CORS handling
+3. **Pygame Patterns**
+   - Use sprite groups for entity management
+   - Implement proper event handling
+   - Follow game loop best practices
 
-4. **Progressive Enhancement**
-   - Build features incrementally
-   - Test each feature before moving on
-   - Don't over-engineer early features
-   - Keep it simple initially
+4. **Placeholder Graphics**
+   - Use colored rectangles/circles for prototyping
+   - Document sprite dimensions
+   - Make sprites easy to replace later
 
-5. **Documentation**
-   - Update this file when architecture changes
-   - Comment complex logic
-   - Keep README.md user-focused
-   - Document API integrations
-
-6. **Code Quality**
-   - Prefer editing existing files over creating new ones
-   - Don't add unnecessary abstractions early
-   - Keep functions focused and small
-   - Use meaningful names
+5. **Code Organization**
+   - Keep game logic separate from rendering
+   - Use constants for magic numbers
+   - Comment complex algorithms (especially dungeon generation)
 
 ### Common Tasks
 
-#### Adding a New Feature
+#### Adding a New Enemy Type
 
-1. Create feature branch
-2. Implement in appropriate directory (popup, content, background)
-3. Test manually in Chrome
-4. Update manifest.json if needed (permissions, content scripts)
-5. Document in README if user-facing
-6. Commit and push
+1. Create class inheriting from Enemy in `enemy.py`
+2. Define stats (HP, damage, speed)
+3. Implement behavior in `update()` method
+4. Add sprite/placeholder graphic
+5. Update dungeon spawning logic
 
-#### Adding API Integration
+#### Adding a New Ability/Attack
 
-1. Create API client in `src/api/`
-2. Implement error handling and retries
-3. Add caching layer
-4. Test with various scenarios
-5. Document API usage and rate limits
+1. Create projectile type in `projectile.py`
+2. Add ability to character class
+3. Implement resource cost
+4. Add visual effect
+5. Test collision and damage
 
-#### Debugging Issues
+#### Modifying Dungeon Generation
 
-1. Check Chrome DevTools Console
-2. Inspect service worker (chrome://extensions)
-3. Review chrome.storage contents
-4. Check network tab for API calls
-5. Test in incognito mode
+1. Review existing algorithm in `dungeon.py`
+2. Make incremental changes
+3. Test multiple generations
+4. Ensure no impossible layouts
+5. Verify entity spawning
 
 ---
 
-## Project-Specific Considerations
+## Technical Considerations
 
-### TV Show Data
+### Performance
 
-- **Identify TV Shows**: Parse page content to detect TV show names
-- **Show Information**: Title, season, episode, air date, rating
-- **Recommendations**: Similar shows, cast information
-- **User Preferences**: Track watched shows, favorites
+- Target 60 FPS
+- Optimize collision detection for 20+ entities
+- Use dirty rect rendering when needed
+- Profile code for bottlenecks
 
-### UI/UX Principles
+### Cross-Platform
 
-- **Non-Intrusive**: Extension should enhance, not obstruct
-- **Fast**: Minimal loading time, instant popup
-- **Clean**: Simple, intuitive interface
-- **Accessible**: Support keyboard navigation, screen readers
+- Use relative paths for assets
+- Avoid platform-specific code
+- Test on Windows, macOS, Linux if possible
 
-### Privacy Considerations
+### Scalability
 
-- Don't track user browsing without consent
-- Store data locally when possible
-- Clear disclosure of data usage
-- Provide data export/deletion options
+- Design for easy addition of new classes
+- Make enemy types data-driven
+- Support additional dungeon levels
+- Prepare for save/load system
+
+---
+
+## Dependencies
+
+### Required
+
+```
+pygame >= 2.5.0
+```
+
+### Optional (Development)
+
+```
+pytest >= 7.0.0           # Unit testing
+pygame-gui >= 0.6.0       # Advanced UI (future)
+```
+
+---
+
+## Debugging Tips
+
+### Common Issues
+
+**Game Won't Start**
+- Check pygame installation: `pip install pygame`
+- Verify Python version (3.8+)
+- Check for syntax errors in main.py
+
+**Collision Not Working**
+- Print rect positions
+- Visualize hitboxes (draw rects)
+- Check collision groups
+
+**Performance Issues**
+- Profile with cProfile
+- Check entity count
+- Review draw calls
+- Optimize update loops
+
+**Dungeon Generation Fails**
+- Add generation logging
+- Visualize generation steps
+- Check boundary conditions
+- Verify random seed behavior
 
 ---
 
 ## Resources
 
-### Documentation
+### Pygame Documentation
 
-- [Chrome Extension Docs](https://developer.chrome.com/docs/extensions/)
-- [Manifest V3 Migration](https://developer.chrome.com/docs/extensions/mv3/intro/)
-- [Chrome API Reference](https://developer.chrome.com/docs/extensions/reference/)
+- [Pygame Docs](https://www.pygame.org/docs/)
+- [Pygame Sprite Module](https://www.pygame.org/docs/ref/sprite.html)
+- [Pygame Rect Module](https://www.pygame.org/docs/ref/rect.html)
 
-### TV Data APIs
+### Game Development
 
-- [TVMaze API](https://www.tvmaze.com/api)
-- [TMDB API](https://www.themoviedb.org/documentation/api)
-- [OMDB API](http://www.omdbapi.com/)
+- [Game Programming Patterns](https://gameprogrammingpatterns.com/)
+- [Procedural Dungeon Generation](https://www.roguebasin.com/index.php/Articles)
+- [Isometric Game Design](https://en.wikipedia.org/wiki/Isometric_video_game_graphics)
 
-### Tools
+### Python
 
-- Chrome DevTools for Extensions
-- [Extension Reloader](https://chrome.google.com/webstore/detail/extensions-reloader/fimgfedafeadlieiabdeeaodndnlbhid) for development
-
----
-
-## Troubleshooting
-
-### Common Issues
-
-**Extension Not Loading**
-- Check manifest.json syntax
-- Verify file paths are correct
-- Check Chrome console for errors
-
-**Content Script Not Injecting**
-- Verify matches pattern in manifest
-- Check if page has loaded
-- Review CSP of target page
-
-**Storage Not Persisting**
-- Use chrome.storage, not localStorage in service workers
-- Check storage permissions in manifest
-- Verify async/await usage
-
-**API Calls Failing**
-- Check CORS configuration
-- Verify API key validity
-- Review rate limiting
-- Check network tab in DevTools
+- [PEP 8 Style Guide](https://pep8.org/)
+- [Python Docs](https://docs.python.org/3/)
 
 ---
 
@@ -423,36 +420,40 @@ npm run lint
 
 ### Planned Features
 
-- [ ] TV show detection on streaming platforms
-- [ ] Personalized recommendations
-- [ ] Watch history tracking
-- [ ] Episode notifications
-- [ ] Integration with multiple TV databases
-- [ ] Dark mode support
-- [ ] Options page for customization
+- [ ] Sound effects and background music
+- [ ] Sprite artwork (replace placeholders)
+- [ ] Additional character classes
+- [ ] More enemy varieties
+- [ ] Special abilities per class
+- [ ] Equipment system
+- [ ] Save/Load functionality
+- [ ] Multiple boss types
+- [ ] Difficulty settings
+- [ ] Achievements
 
 ### Technical Improvements
 
-- [ ] TypeScript migration
-- [ ] Automated testing suite
-- [ ] CI/CD pipeline
-- [ ] Automated release process
-- [ ] Performance monitoring
-- [ ] Error tracking/reporting
+- [ ] Unit test suite
+- [ ] Performance profiling
+- [ ] Advanced UI system
+- [ ] Particle effects
+- [ ] Screen shake and juice
+- [ ] Settings menu
+- [ ] Controller support
 
 ---
 
 ## Notes for AI Assistants
 
-- This is a greenfield project - establish patterns early
-- Prioritize user experience and extension performance
-- Follow Chrome Web Store policies for eventual publishing
-- Keep dependencies minimal
-- Document architectural decisions
-- Test thoroughly before committing
-- This file should be updated as the project evolves
+- This is an active game development project
+- Focus on playability and fun first, polish later
+- Use placeholder graphics - easy to replace
+- Keep code modular and well-documented
+- Test frequently during development
+- Balance is important - enemies should be challenging but fair
+- Update this file as architecture evolves
 
 ---
 
-**Last Updated**: 2025-12-20
-**Version**: 1.0.0 (Initial)
+**Last Updated**: 2025-12-26
+**Version**: 1.0.0 (Initial Game Version)

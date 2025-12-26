@@ -1,51 +1,108 @@
-# 📺 TVBuddy
+# 🎮 TVBuddy - Isometric Action RPG
 
-A Chrome extension that provides TV show information and recommendations while you browse.
+An isometric dungeon-crawler Action RPG built with Python and Pygame.
 
-## Features
+## Game Features
 
-✨ **Quick TV Show Search** - Search for any TV show instantly
-⭐ **Ratings & Reviews** - See ratings, genres, and detailed information
-🎬 **Show Details** - Get summaries, premiere dates, and status
-🎨 **Beautiful UI** - Clean, modern interface with smooth animations
+⚔️ **3 Character Classes**
+- **Warrior** - High HP, High Damage, Slow Attack (Health + Stamina)
+- **Ranger/Thief** - Mid HP, Mid Damage, Ranged Attack (Health + Stamina)
+- **Wizard/Sorceress** - Low HP, Low Damage, Fast Ranged Attack (Health + Mana)
 
-## Quick Start
+🏰 **3-Level Procedural Dungeon**
+- Level 1-2: Progressive difficulty with scaling enemies
+- Level 3: Hardest mobs + Final Boss
+- Randomly generated walls, doors, and treasure chests
 
-1. **Load the Extension**
-   - Open Chrome and go to `chrome://extensions`
-   - Enable "Developer mode" (top-right toggle)
-   - Click "Load unpacked" and select the `tvbuddy` folder
+📈 **Progression System**
+- XP-based leveling that boosts Health and Damage
+- Stat-boost loot from chests
+- Enemy difficulty scaling per floor
 
-2. **Start Using**
-   - Click the TVBuddy icon in your toolbar
-   - Search for any TV show
-   - Get instant information!
+🎨 **Game UI**
+- Health and Resource bars (Stamina/Mana)
+- XP tracker
+- Floor number indicator
+- Character class selection screen
 
-For detailed setup instructions, see [SETUP.md](SETUP.md)
+## Controls
 
-## Technology
+- **WASD** - Character movement
+- **Mouse Click** - Attack/Cast spell
+- **ESC** - Pause/Menu
 
-- **Manifest V3** - Latest Chrome extension standard
-- **TVMaze API** - Free TV show database
-- **Vanilla JavaScript** - No frameworks, lightweight and fast
-- **Modern CSS** - Beautiful gradients and animations
+## Installation
+
+### Prerequisites
+
+```bash
+# Python 3.8 or higher
+python --version
+
+# Pygame library
+pip install pygame
+```
+
+### Running the Game
+
+```bash
+# Clone the repository
+git clone https://github.com/evlswtmn/tvbuddy.git
+cd tvbuddy
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the game
+python main.py
+```
+
+## Project Structure
+
+```
+tvbuddy/
+├── main.py              # Game entry point and main loop
+├── game/
+│   ├── player.py        # Player class and character classes
+│   ├── enemy.py         # Enemy classes and AI
+│   ├── dungeon.py       # Procedural dungeon generation
+│   ├── projectile.py    # Projectile/attack system
+│   ├── items.py         # Loot and chest system
+│   ├── ui.py            # UI overlay and menus
+│   └── utils.py         # Helper functions
+├── assets/              # Sprites and sounds (placeholder colored shapes)
+├── requirements.txt     # Python dependencies
+└── README.md
+```
 
 ## Development
 
-This is an open-source project. For AI assistants and developers working on this codebase, see [CLAUDE.md](CLAUDE.md) for detailed development guidelines.
+For AI assistants and developers working on this codebase, see [CLAUDE.md](CLAUDE.md) for detailed development guidelines and architecture documentation.
 
-## Future Features
+## Technical Details
 
-- [ ] Episode tracking
-- [ ] Personalized recommendations
-- [ ] Watch history
-- [ ] Multi-show comparison
-- [ ] Dark mode
-- [ ] Notifications for new episodes
+- **Engine**: Pygame
+- **Language**: Python 3.8+
+- **Architecture**: Modular class-based design
+- **Graphics**: Colored placeholder sprites (easily replaceable)
+- **Dungeon Generation**: Procedural algorithm with rooms and corridors
+
+## Roadmap
+
+- [x] Character class system
+- [x] Procedural dungeon generation
+- [x] Combat mechanics
+- [x] XP and leveling system
+- [ ] Sound effects and music
+- [ ] Sprite artwork
+- [ ] Additional enemy types
+- [ ] Special abilities per class
+- [ ] Save/Load system
+- [ ] Multiple boss variants
 
 ## Contributing
 
-This project welcomes contributions! Feel free to submit issues or pull requests.
+Contributions are welcome! Feel free to submit issues or pull requests.
 
 ## License
 
@@ -53,4 +110,4 @@ MIT License - feel free to use and modify!
 
 ---
 
-Made with ❤️ for TV lovers everywhere
+Made with ❤️ for dungeon-crawler fans
