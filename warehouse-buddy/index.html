@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LoadPrep - Warehouse Work Order Scanner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">&#x1F4E6; LoadPrep</h1>
+      <p class="app-tagline">Work Order Scanner</p>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="scan">&#x1F50D; Scan</button>
+    <button class="tab-btn" data-tab="database">&#x1F4CB; Customers</button>
+    <button class="tab-btn" data-tab="tools">&#x2699; Tools</button>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- ===== SCAN TAB ===== -->
+    <section id="scan" class="tab-content active">
+      <!-- Scan Input Area -->
+      <div class="scan-area">
+        <label class="scan-label" for="scan-input">Scan or Enter Work Order / Customer Code</label>
+        <div class="scan-input-row">
+          <input type="text" id="scan-input" class="scan-input"
+                 placeholder="Scan barcode or type code..."
+                 autocomplete="off" autofocus>
+          <button class="btn btn-scan" id="camera-scan-btn" title="Scan with camera">
+            &#x1F4F7;
+          </button>
+        </div>
+        <button class="btn btn-lookup" id="lookup-btn">Look Up</button>
+      </div>
+
+      <!-- Camera Scanner -->
+      <div class="camera-section" id="camera-section" style="display:none;">
+        <div class="camera-header">
+          <span>Point camera at barcode</span>
+          <button class="btn btn-close-cam" id="close-camera-btn">&#x2715; Close</button>
+        </div>
+        <div id="scanner-container"></div>
+      </div>
+
+      <!-- Result Area -->
+      <div id="result-area">
+        <div class="result-placeholder">
+          <span class="placeholder-icon">&#x1F4E6;</span>
+          <p>Scan a work order to see customer info</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DATABASE TAB ===== -->
+    <section id="database" class="tab-content">
+      <div class="db-header">
+        <div class="db-search-row">
+          <input type="text" id="db-search" class="db-search-input"
+                 placeholder="Search customers...">
+        </div>
+        <button class="btn btn-add" id="add-customer-btn">+ Add Customer</button>
+      </div>
+
+      <div class="customer-count">
+        <span id="customer-count">0</span> / 100 customers
+      </div>
+
+      <div class="customer-list" id="customer-list">
+        <p class="empty-state">No customers yet. Add your first customer above!</p>
+      </div>
+    </section>
+
+    <!-- ===== TOOLS TAB ===== -->
+    <section id="tools" class="tab-content">
+      <div class="tool-card">
+        <h2>&#x1F4E5; Import Customers</h2>
+        <p>Import customers from a CSV file. Format each line as:</p>
+        <code class="csv-format">Code, Customer Name, Address, Has Forklift (yes/no)</code>
+        <textarea id="import-text" class="import-textarea"
+                  placeholder="WO-101, Acme Corp, 123 Main St City ST 12345, yes&#10;WO-102, Beta Inc, 456 Oak Ave Town ST 67890, no"></textarea>
+        <button class="btn btn-import" id="import-btn">Import</button>
+      </div>
+
+      <div class="tool-card">
+        <h2>&#x1F4E4; Export Customers</h2>
+        <p>Download your customer database as CSV for backup.</p>
+        <button class="btn btn-export" id="export-btn">Export CSV</button>
+      </div>
+
+      <div class="tool-card danger-zone">
+        <h2>&#x26A0; Clear Database</h2>
+        <p>Remove all customers. This cannot be undone.</p>
+        <button class="btn btn-danger" id="clear-db-btn">Clear All Customers</button>
+      </div>
+
+      <div class="tool-card">
+        <h2>&#x1F4F1; Scanner Tips</h2>
+        <ul class="tips-list">
+          <li><strong>Hardware scanner:</strong> Just scan - it types directly into the input field.</li>
+          <li><strong>Phone camera:</strong> Tap the camera icon next to the input field.</li>
+          <li><strong>Manual entry:</strong> Type the work order code and tap Look Up.</li>
+          <li><strong>Quick clear:</strong> Tap the input field after a lookup to scan the next order.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== ADD/EDIT CUSTOMER MODAL ===== -->
+  <div class="modal-overlay" id="customer-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Customer</h3>
+        <button class="modal-close" id="close-modal-btn">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="cust-code">Work Order / Customer Code</label>
+          <input type="text" id="cust-code" placeholder="e.g., WO-1234 or ACME">
+        </div>
+        <div class="form-group">
+          <label for="cust-name">Customer Name</label>
+          <input type="text" id="cust-name" placeholder="e.g., Acme Corporation">
+        </div>
+        <div class="form-group">
+          <label for="cust-address">Delivery Address</label>
+          <input type="text" id="cust-address" placeholder="e.g., 123 Main St, City, ST 12345">
+        </div>
+        <div class="form-group">
+          <label>Has Forklift on Site?</label>
+          <div class="forklift-toggle">
+            <button class="toggle-btn toggle-yes active" id="toggle-yes" data-value="yes">
+              &#x2705; YES
+            </button>
+            <button class="toggle-btn toggle-no" id="toggle-no" data-value="no">
+              &#x274C; NO
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="cancel-modal-btn">Cancel</button>
+        <button class="btn btn-save" id="save-customer-btn">Save Customer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Delete Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" id="close-confirm-btn">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message">Are you sure you want to delete this customer?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" id="cancel-confirm-btn">Cancel</button>
+        <button class="btn btn-danger" id="confirm-action-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-message"></span>
+  </div>
+
+  <!-- Barcode scanner library (lightweight, supports most barcode formats + QR) -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
