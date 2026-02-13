@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBuddy - Exercise Planner & Calorie Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Confetti Canvas (for celebrations) -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">
+        <span class="title-icon">&#x1F3CB;</span> FitBuddy
+      </h1>
+      <p class="app-tagline">Your No-Equipment Workout Partner</p>
+    </div>
+  </header>
+
+  <!-- Tab Navigation -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="dashboard">
+      <span class="tab-icon">&#x1F3E0;</span>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab-btn" data-tab="workouts">
+      <span class="tab-icon">&#x1F4AA;</span>
+      <span class="tab-label">Workouts</span>
+    </button>
+    <button class="tab-btn" data-tab="calories">
+      <span class="tab-icon">&#x1F525;</span>
+      <span class="tab-label">Calories</span>
+    </button>
+    <button class="tab-btn" data-tab="calendar">
+      <span class="tab-icon">&#x1F4C5;</span>
+      <span class="tab-label">Calendar</span>
+    </button>
+    <button class="tab-btn" data-tab="rewards">
+      <span class="tab-icon">&#x1F3C6;</span>
+      <span class="tab-label">Rewards</span>
+    </button>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+
+    <!-- ===== DASHBOARD TAB ===== -->
+    <section id="dashboard" class="tab-content active">
+      <!-- Motivational Banner -->
+      <div class="motivation-banner">
+        <p class="quote-text" id="motivation-quote"></p>
+        <span class="quote-icon">&#x26A1;</span>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="stats-grid">
+        <div class="stat-card stat-workouts">
+          <span class="stat-icon">&#x1F3CB;</span>
+          <div class="stat-info">
+            <span class="stat-value" id="dash-workouts-week">0</span>
+            <span class="stat-label">Workouts This Week</span>
+          </div>
+        </div>
+        <div class="stat-card stat-calories">
+          <span class="stat-icon">&#x1F525;</span>
+          <div class="stat-info">
+            <span class="stat-value" id="dash-calories-burned">0</span>
+            <span class="stat-label">Calories Burned Today</span>
+          </div>
+        </div>
+        <div class="stat-card stat-streak">
+          <span class="stat-icon">&#x1F525;</span>
+          <div class="stat-info">
+            <span class="stat-value" id="dash-streak">0</span>
+            <span class="stat-label">Week Streak</span>
+          </div>
+        </div>
+        <div class="stat-card stat-badges">
+          <span class="stat-icon">&#x2B50;</span>
+          <div class="stat-info">
+            <span class="stat-value" id="dash-badges">0</span>
+            <span class="stat-label">Badges Earned</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Today's Workout Preview -->
+      <div class="section-card" id="today-workout-section">
+        <h2 class="section-title">Today's Workout</h2>
+        <div id="today-workout-preview">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Calorie Balance Quick View -->
+      <div class="section-card">
+        <h2 class="section-title">Today's Calorie Balance</h2>
+        <div class="calorie-quick-view">
+          <div class="calorie-bar-container">
+            <div class="calorie-bar-labels">
+              <span class="cal-label cal-in-label">Eaten</span>
+              <span class="cal-label cal-out-label">Burned</span>
+            </div>
+            <div class="calorie-bars">
+              <div class="cal-bar cal-in-bar">
+                <div class="cal-bar-fill" id="dash-cal-in-bar"></div>
+                <span class="cal-bar-value" id="dash-cal-in-value">0</span>
+              </div>
+              <div class="cal-bar cal-out-bar">
+                <div class="cal-bar-fill" id="dash-cal-out-bar"></div>
+                <span class="cal-bar-value" id="dash-cal-out-value">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="net-calories" id="dash-net-calories">
+            <span class="net-label">Net</span>
+            <span class="net-value">0</span>
+            <span class="net-unit">cal</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Badges -->
+      <div class="section-card" id="recent-badges-section" style="display:none;">
+        <h2 class="section-title">Recent Achievements</h2>
+        <div class="badge-row" id="recent-badges"></div>
+      </div>
+    </section>
+
+    <!-- ===== WORKOUTS TAB ===== -->
+    <section id="workouts" class="tab-content">
+      <!-- Setup Panel (shown if no days selected) -->
+      <div class="section-card" id="workout-setup">
+        <h2 class="section-title">Set Up Your Week</h2>
+        <p class="setup-description">Choose 3 days for your workouts. Each session is about 1 hour of bodyweight exercises - no equipment needed!</p>
+
+        <div class="profile-form">
+          <div class="form-group">
+            <label>Your Weight (for calorie estimates)</label>
+            <div class="input-row">
+              <input type="number" id="user-weight" placeholder="155" min="80" max="500">
+              <select id="weight-unit">
+                <option value="lbs">lbs</option>
+                <option value="kg">kg</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Fitness Level</label>
+            <div class="level-buttons">
+              <button class="level-btn active" data-level="beginner">Beginner</button>
+              <button class="level-btn" data-level="intermediate">Intermediate</button>
+              <button class="level-btn" data-level="advanced">Advanced</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-selector">
+          <h3>Pick Your 3 Workout Days</h3>
+          <div class="day-buttons">
+            <button class="day-btn" data-day="0">Mon</button>
+            <button class="day-btn" data-day="1">Tue</button>
+            <button class="day-btn" data-day="2">Wed</button>
+            <button class="day-btn" data-day="3">Thu</button>
+            <button class="day-btn" data-day="4">Fri</button>
+            <button class="day-btn" data-day="5">Sat</button>
+            <button class="day-btn" data-day="6">Sun</button>
+          </div>
+          <p class="day-count"><span id="days-selected">0</span>/3 days selected</p>
+        </div>
+        <button class="btn btn-primary btn-large" id="save-setup-btn" disabled>Save & Generate Plan</button>
+      </div>
+
+      <!-- Weekly Plan Display -->
+      <div id="weekly-plan" style="display:none;">
+        <div class="week-header">
+          <h2 class="section-title">This Week's Plan</h2>
+          <button class="btn btn-small btn-outline" id="edit-plan-btn">Edit Schedule</button>
+        </div>
+        <div class="workout-cards" id="workout-cards-container">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Active Workout View -->
+      <div id="active-workout" style="display:none;">
+        <div class="workout-active-header">
+          <button class="btn btn-small btn-outline" id="back-to-plan-btn">Back</button>
+          <h2 id="active-workout-title"></h2>
+        </div>
+
+        <div class="workout-timer-section">
+          <div class="timer-display" id="workout-timer">00:00</div>
+          <div class="timer-controls">
+            <button class="btn btn-round btn-start" id="timer-start-btn">Start</button>
+            <button class="btn btn-round btn-pause" id="timer-pause-btn" style="display:none;">Pause</button>
+            <button class="btn btn-round btn-reset" id="timer-reset-btn">Reset</button>
+          </div>
+        </div>
+
+        <div class="exercise-list" id="active-exercise-list">
+          <!-- Filled by JS -->
+        </div>
+
+        <button class="btn btn-primary btn-large btn-complete" id="complete-workout-btn">
+          Complete Workout &#x2714;
+        </button>
+      </div>
+    </section>
+
+    <!-- ===== CALORIES TAB ===== -->
+    <section id="calories" class="tab-content">
+      <!-- Daily Calorie Summary -->
+      <div class="section-card calorie-summary-card">
+        <h2 class="section-title">Today's Calories</h2>
+        <div class="calorie-dashboard">
+          <div class="calorie-ring-container">
+            <svg class="calorie-ring" viewBox="0 0 200 200">
+              <circle class="ring-bg" cx="100" cy="100" r="85" />
+              <circle class="ring-consumed" cx="100" cy="100" r="85" id="ring-consumed" />
+              <circle class="ring-burned" cx="100" cy="100" r="70" id="ring-burned" />
+            </svg>
+            <div class="ring-center-text">
+              <span class="ring-net" id="cal-ring-net">0</span>
+              <span class="ring-label">net cal</span>
+            </div>
+          </div>
+          <div class="calorie-breakdown">
+            <div class="cal-item cal-consumed">
+              <span class="cal-dot consumed-dot"></span>
+              <div>
+                <span class="cal-amount" id="cal-total-consumed">0</span>
+                <span class="cal-type">Consumed</span>
+              </div>
+            </div>
+            <div class="cal-item cal-burned">
+              <span class="cal-dot burned-dot"></span>
+              <div>
+                <span class="cal-amount" id="cal-total-burned">0</span>
+                <span class="cal-type">Burned</span>
+              </div>
+            </div>
+            <div class="cal-item cal-goal">
+              <span class="cal-dot goal-dot"></span>
+              <div>
+                <span class="cal-amount" id="cal-goal-display">2000</span>
+                <span class="cal-type">Daily Goal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calorie Goal Setting -->
+        <div class="goal-setting">
+          <label>Daily Calorie Goal:</label>
+          <input type="number" id="calorie-goal-input" value="2000" min="1000" max="5000" step="50">
+          <button class="btn btn-small btn-accent" id="set-goal-btn">Set</button>
+        </div>
+      </div>
+
+      <!-- Food Log -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2 class="section-title">Food Log</h2>
+          <button class="btn btn-small btn-primary" id="add-food-btn">+ Add Food</button>
+        </div>
+
+        <!-- Quick Add Common Foods -->
+        <div class="quick-add-section">
+          <h3 class="subsection-title">Quick Add</h3>
+          <div class="quick-food-grid" id="quick-food-grid">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- Food Log Entries -->
+        <div class="log-entries" id="food-log-entries">
+          <p class="empty-state">No food logged today. Add your meals above!</p>
+        </div>
+      </div>
+
+      <!-- Exercise Calorie Log -->
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2 class="section-title">Exercise Log</h2>
+          <button class="btn btn-small btn-accent" id="add-exercise-cal-btn">+ Add Exercise</button>
+        </div>
+
+        <!-- Quick Add Exercises -->
+        <div class="quick-add-section">
+          <h3 class="subsection-title">Quick Add</h3>
+          <div class="quick-exercise-grid" id="quick-exercise-grid">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <div class="log-entries" id="exercise-log-entries">
+          <p class="empty-state">No exercises logged today. Get moving!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CALENDAR TAB ===== -->
+    <section id="calendar" class="tab-content">
+      <div class="section-card">
+        <div class="calendar-header">
+          <button class="btn btn-round btn-small" id="cal-prev-month">&lt;</button>
+          <h2 class="calendar-month-title" id="calendar-month-title"></h2>
+          <button class="btn btn-round btn-small" id="cal-next-month">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-day-header">Sun</div>
+          <div class="calendar-day-header">Mon</div>
+          <div class="calendar-day-header">Tue</div>
+          <div class="calendar-day-header">Wed</div>
+          <div class="calendar-day-header">Thu</div>
+          <div class="calendar-day-header">Fri</div>
+          <div class="calendar-day-header">Sat</div>
+          <div id="calendar-days" class="calendar-days-container">
+            <!-- Filled by JS -->
+          </div>
+        </div>
+
+        <!-- Calendar Legend -->
+        <div class="calendar-legend">
+          <span class="legend-item"><span class="legend-dot scheduled"></span> Scheduled</span>
+          <span class="legend-item"><span class="legend-dot completed"></span> Completed</span>
+          <span class="legend-item"><span class="legend-dot missed"></span> Missed</span>
+          <span class="legend-item"><span class="legend-dot today"></span> Today</span>
+        </div>
+      </div>
+
+      <!-- Day Detail -->
+      <div class="section-card" id="calendar-day-detail" style="display:none;">
+        <h3 class="section-title" id="cal-detail-date"></h3>
+        <div id="cal-detail-content"></div>
+      </div>
+
+      <!-- Monthly Stats -->
+      <div class="section-card">
+        <h2 class="section-title">Monthly Summary</h2>
+        <div class="monthly-stats" id="monthly-stats">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REWARDS TAB ===== -->
+    <section id="rewards" class="tab-content">
+      <!-- Streak Display -->
+      <div class="streak-banner">
+        <div class="streak-flame">&#x1F525;</div>
+        <div class="streak-info">
+          <span class="streak-count" id="reward-streak">0</span>
+          <span class="streak-label">Week Streak</span>
+        </div>
+        <div class="streak-flame">&#x1F525;</div>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="reward-stats">
+        <div class="reward-stat">
+          <span class="reward-stat-value" id="total-workouts-stat">0</span>
+          <span class="reward-stat-label">Total Workouts</span>
+        </div>
+        <div class="reward-stat">
+          <span class="reward-stat-value" id="total-calories-stat">0</span>
+          <span class="reward-stat-label">Total Cal Burned</span>
+        </div>
+        <div class="reward-stat">
+          <span class="reward-stat-value" id="total-badges-stat">0</span>
+          <span class="reward-stat-label">Badges Earned</span>
+        </div>
+      </div>
+
+      <!-- Badge Grid -->
+      <div class="section-card">
+        <h2 class="section-title">Your Badges</h2>
+        <div class="badge-grid" id="badge-grid">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- Milestones -->
+      <div class="section-card">
+        <h2 class="section-title">Next Milestones</h2>
+        <div class="milestones-list" id="milestones-list">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== MODALS ===== -->
+
+  <!-- Add Food Modal -->
+  <div class="modal-overlay" id="food-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Food</h3>
+        <button class="modal-close" data-close="food-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Food Name</label>
+          <input type="text" id="food-name-input" placeholder="e.g., Grilled chicken breast">
+        </div>
+        <div class="form-group">
+          <label>Calories</label>
+          <input type="number" id="food-cal-input" placeholder="e.g., 250" min="0">
+        </div>
+        <div class="form-group">
+          <label>Meal</label>
+          <select id="food-meal-select">
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="snack">Snack</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close="food-modal">Cancel</button>
+        <button class="btn btn-primary" id="save-food-btn">Add Food</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Exercise Modal -->
+  <div class="modal-overlay" id="exercise-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Exercise</h3>
+        <button class="modal-close" data-close="exercise-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Exercise Type</label>
+          <select id="exercise-type-select">
+            <option value="walking_slow">Walking (slow pace, ~2mph)</option>
+            <option value="walking_moderate">Walking (moderate, ~3.5mph)</option>
+            <option value="walking_brisk">Walking (brisk, ~4.5mph)</option>
+            <option value="jogging">Jogging</option>
+            <option value="running">Running</option>
+            <option value="cycling">Cycling</option>
+            <option value="bodyweight_light">Bodyweight Exercises (light)</option>
+            <option value="bodyweight_moderate">Bodyweight Exercises (moderate)</option>
+            <option value="bodyweight_intense">Bodyweight Exercises (intense/HIIT)</option>
+            <option value="yoga">Yoga</option>
+            <option value="stretching">Stretching</option>
+            <option value="dancing">Dancing</option>
+            <option value="swimming">Swimming</option>
+            <option value="jump_rope">Jump Rope</option>
+            <option value="stairs">Stair Climbing</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Duration (minutes)</label>
+          <input type="number" id="exercise-duration-input" placeholder="e.g., 60" min="1" max="300">
+        </div>
+        <div class="form-group" id="custom-cal-group" style="display:none;">
+          <label>Calories Burned</label>
+          <input type="number" id="exercise-custom-cal" placeholder="e.g., 300" min="0">
+        </div>
+        <div class="form-group" id="exercise-distance-group">
+          <label>Distance (miles, optional)</label>
+          <input type="number" id="exercise-distance-input" placeholder="e.g., 2.0" min="0" step="0.1">
+        </div>
+        <p class="calorie-estimate" id="exercise-calorie-estimate">Estimated: ~0 calories</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" data-close="exercise-modal">Cancel</button>
+        <button class="btn btn-accent" id="save-exercise-btn">Add Exercise</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workout Complete Celebration Modal -->
+  <div class="modal-overlay" id="celebration-modal">
+    <div class="modal celebration-modal">
+      <div class="celebration-content">
+        <div class="celebration-icon">&#x1F389;</div>
+        <h2>Workout Complete!</h2>
+        <p class="celebration-message" id="celebration-message"></p>
+        <div class="celebration-stats" id="celebration-stats"></div>
+        <div class="new-badges" id="celebration-badges"></div>
+        <button class="btn btn-primary btn-large" data-close="celebration-modal">Awesome!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast">
+    <span class="toast-icon"></span>
+    <span class="toast-message"></span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
